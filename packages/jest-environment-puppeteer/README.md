@@ -25,16 +25,16 @@ Update your Jest configuration:
 Use Puppeteer in your tests:
 
 ```js
-describe('Google', () => {
+describe("Google", () => {
   beforeAll(async () => {
-    await page.goto('https://google.com')
-  })
+    await page.goto("https://google.com");
+  });
 
   it('should display "google" text on page', async () => {
-    const text = await page.evaluate(() => document.body.textContent)
-    expect(text).toContain('google')
-  })
-})
+    const text = await page.evaluate(() => document.body.textContent);
+    expect(text).toContain("google");
+  });
+});
 ```
 
 ## API
@@ -44,10 +44,10 @@ describe('Google', () => {
 Give access to the [Puppeteer Browser](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-browser).
 
 ```js
-it('should open a new page', async () => {
-  const page = await browser.newPage()
-  await page.goto('https://google.com')
-})
+it("should open a new page", async () => {
+  const page = await browser.newPage();
+  await page.goto("https://google.com");
+});
 ```
 
 ### `global.page`
@@ -55,9 +55,9 @@ it('should open a new page', async () => {
 Give access to a [Puppeteer Page](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#class-page) opened at start (you will use it most of time).
 
 ```js
-it('should fill an input', async () => {
-  await page.type('#myinput', 'Hello')
-})
+it("should fill an input", async () => {
+  await page.type("#myinput", "Hello");
+});
 ```
 
 ### `global.context`
@@ -72,9 +72,9 @@ Put test in debug mode.
 - A `debugger` instruction to Chromium, if Puppeteer has been launched with `{ devtools: true }` it will stop
 
 ```js
-it('should put test in debug mode', async () => {
-  await jestPuppeteer.debug()
-})
+it("should put test in debug mode", async () => {
+  await jestPuppeteer.debug();
+});
 ```
 
 ### `global.jestPuppeteer.resetPage()`
@@ -83,8 +83,8 @@ Reset global.page
 
 ```js
 beforeEach(async () => {
-  await jestPuppeteer.resetPage()
-})
+  await jestPuppeteer.resetPage();
+});
 ```
 
 ### `global.jestPuppeteer.resetBrowser()`
@@ -93,20 +93,21 @@ Reset global.browser, global.context, and global.page
 
 ```js
 beforeEach(async () => {
-  await jestPuppeteer.resetBrowser()
-})
+  await jestPuppeteer.resetBrowser();
+});
 ```
 
 ### `jest-puppeteer.config.js`
 
 You can specify a `jest-puppeteer.config.js` at the root of the project or define a custom path using `JEST_PUPPETEER_CONFIG` environment variable. It should export a config object or a Promise for a config object.
 
-- `launch` <[object]> [All Puppeteer launch options](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerlaunchoptions) can be specified in config. Since it is JavaScript, you can use all stuff you need, including environment.
-- `connect` <[object]> [All Puppeteer connect options](https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md#puppeteerconnectoptions) can be specified in config. This is an alternative to `launch` config, allowing you to connect to an already running instance of Chrome.
+- `launch` <[object]> [All Puppeteer launch options](https://github.com/puppeteer/puppeteer/blob/main/docs/api/puppeteer.puppeteernodelaunchoptions.md) can be specified in config. Since it is JavaScript, you can use all stuff you need, including environment.
+- `connect` <[object]> [All Puppeteer connect options](https://github.com/puppeteer/puppeteer/blob/main/docs/api/puppeteer.connectoptions.md) can be specified in config. This is an alternative to `launch` config, allowing you to connect to an already running instance of Chrome.
 - `browserContext` <[string]>. By default, the browser context (cookies, localStorage, etc) is shared between all tests. The following options are available for `browserContext`:
   - `default` Each test starts a tab, so all tests share the same context.
   - `incognito` Each tests starts an incognito window, so all tests have a separate, isolated context. Useful when running tests that could interfere with one another. (_Example: testing multiple users on the same app at once with login, transactions, etc._)
 - `exitOnPageError` <[boolean]> Exits page on any global error message thrown. Defaults to `true`.
+- `runBeforeUnloadOnClose` <[boolean]> Run `page.close()` with `{ runBeforeUnload: true }` when tests finish, see [`page.close`](https://pptr.dev/api/puppeteer.page.close/)
 - `server` <[Object]> Server options allowed by [jest-dev-server](https://github.com/smooth-code/jest-puppeteer/tree/master/packages/jest-dev-server)
 
 #### Example 1
@@ -116,15 +117,15 @@ You can specify a `jest-puppeteer.config.js` at the root of the project or defin
 module.exports = {
   launch: {
     dumpio: true,
-    headless: process.env.HEADLESS !== 'false',
+    headless: process.env.HEADLESS !== "false",
   },
   server: {
-    command: 'node server.js',
+    command: "node server.js",
     port: 4444,
     launchTimeout: 10000,
     debug: true,
   },
-}
+};
 ```
 
 #### Example 2
@@ -133,26 +134,26 @@ This example uses an already running instance of Chrome by passing the active we
 
 ```js
 // jest-puppeteer.config.js
-const fetch = require('node-fetch')
-const dockerHost = 'http://localhost:9222'
+const fetch = require("node-fetch");
+const dockerHost = "http://localhost:9222";
 
 async function getConfig() {
-  const response = await fetch(`${dockerHost}/json/version`)
-  const browserWSEndpoint = (await response.json()).webSocketDebuggerUrl
+  const response = await fetch(`${dockerHost}/json/version`);
+  const browserWSEndpoint = (await response.json()).webSocketDebuggerUrl;
   return {
     connect: {
       browserWSEndpoint,
     },
     server: {
-      command: 'node server.js',
+      command: "node server.js",
       port: 3000,
       launchTimeout: 10000,
       debug: true,
     },
-  }
+  };
 }
 
-module.exports = getConfig()
+module.exports = getConfig();
 ```
 
 ## Inspiration
